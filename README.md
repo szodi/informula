@@ -158,7 +158,7 @@ The server starts on port `8080` by default.
 ## Testing
 
 ### Manually
-Under /src/main/resources/http folder you can find a test request file for each API.
+Under `/src/main/resources/http` folder you can find a test request file for each API.
 
 ### Automatically
 ```bash
