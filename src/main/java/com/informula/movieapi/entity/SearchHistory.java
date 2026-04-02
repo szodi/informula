@@ -21,17 +21,17 @@ public class SearchHistory {
     @SequenceGenerator(name = "seq_search_history", sequenceName = "seq_search_history", allocationSize = 10)
     private Long id;
 
-    @Column(name = "query", nullable = false)
+    @Column(nullable = false)
     private String query;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "api_name", nullable = false, length = 10)
+    @Column(nullable = false, length = 10)
     private ApiName apiName;
 
-    @Column(name = "result_count")
+    @Column
     private Integer resultCount;
 
-    @Column(name = "searched_at", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime searchedAt;
 
     protected SearchHistory() {}
