@@ -1,5 +1,6 @@
 package com.informula.movieapi.entity;
 
+import com.informula.movieapi.enums.ApiName;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -23,8 +24,9 @@ public class SearchHistory {
     @Column(name = "query", nullable = false)
     private String query;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "api_name", nullable = false, length = 10)
-    private String apiName;
+    private ApiName apiName;
 
     @Column(name = "result_count")
     private Integer resultCount;
@@ -34,7 +36,7 @@ public class SearchHistory {
 
     protected SearchHistory() {}
 
-    public SearchHistory(String query, String apiName, Integer resultCount, LocalDateTime searchedAt) {
+    public SearchHistory(String query, ApiName apiName, Integer resultCount, LocalDateTime searchedAt) {
         this.query = query;
         this.apiName = apiName;
         this.resultCount = resultCount;
@@ -43,7 +45,7 @@ public class SearchHistory {
 
     public Long getId() { return id; }
     public String getQuery() { return query; }
-    public String getApiName() { return apiName; }
+    public ApiName getApiName() { return apiName; }
     public Integer getResultCount() { return resultCount; }
     public LocalDateTime getSearchedAt() { return searchedAt; }
 }

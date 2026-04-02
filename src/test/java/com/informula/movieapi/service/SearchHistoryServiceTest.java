@@ -1,6 +1,7 @@
 package com.informula.movieapi.service;
 
 import com.informula.movieapi.entity.SearchHistory;
+import com.informula.movieapi.enums.ApiName;
 import com.informula.movieapi.repository.SearchHistoryRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,14 +28,14 @@ class SearchHistoryServiceTest {
     void saveAsync_persistsNormalisedEntry() {
         when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        service.saveAsync("Avengers ", "OMDB", 5);
+        service.saveAsync("Avengers ", ApiName.OMDB, 5);
 
         ArgumentCaptor<SearchHistory> captor = ArgumentCaptor.forClass(SearchHistory.class);
         verify(repository).save(captor.capture());
 
         SearchHistory saved = captor.getValue();
         assertThat(saved.getQuery()).isEqualTo("avengers");
-        assertThat(saved.getApiName()).isEqualTo("omdb");
+        assertThat(saved.getApiName()).isEqualTo(ApiName.OMDB);
         assertThat(saved.getResultCount()).isEqualTo(5);
         assertThat(saved.getSearchedAt()).isNotNull();
     }
@@ -43,6 +44,6 @@ class SearchHistoryServiceTest {
     void saveAsync_doesNotThrow_whenRepositoryFails() {
         doThrow(new RuntimeException("DB unavailable")).when(repository).save(any());
 
-        assertThatNoException().isThrownBy(() -> service.saveAsync("Thor", "tmdb", 3));
+        assertThatNoException().isThrownBy(() -> service.saveAsync("Thor", ApiName.TMDB, 3));
     }
 }

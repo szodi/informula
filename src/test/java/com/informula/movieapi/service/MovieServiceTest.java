@@ -2,7 +2,7 @@ package com.informula.movieapi.service;
 
 import com.informula.movieapi.dto.MovieDto;
 import com.informula.movieapi.dto.MovieResponse;
-import com.informula.movieapi.exception.InvalidApiException;
+import com.informula.movieapi.enums.ApiName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,10 +36,10 @@ class MovieServiceTest {
         List<MovieDto> movies = List.of(new MovieDto("Iron Man", "2008", List.of("Jon Favreau")));
         when(omdbService.searchMovies("Iron Man")).thenReturn(movies);
 
-        MovieResponse response = movieService.searchMovies("Iron Man", "omdb");
+        MovieResponse response = movieService.searchMovies("Iron Man", ApiName.OMDB);
 
         assertThat(response.movies()).hasSize(1);
-        assertThat(response.movies().get(0).title()).isEqualTo("Iron Man");
+        assertThat(response.movies().getFirst().title()).isEqualTo("Iron Man");
         verify(omdbService).searchMovies("Iron Man");
         verifyNoInteractions(tmdbService);
     }
@@ -48,32 +48,17 @@ class MovieServiceTest {
     void searchMovies_routesToTmdbService_whenApiIsTmdb() {
         when(tmdbService.searchMovies("Thor")).thenReturn(List.of());
 
-        movieService.searchMovies("Thor", "tmdb");
+        movieService.searchMovies("Thor", ApiName.TMDB);
 
         verify(tmdbService).searchMovies("Thor");
         verifyNoInteractions(omdbService);
     }
 
     @Test
-    void searchMovies_isCaseInsensitiveForApiName() {
-        when(omdbService.searchMovies("Thor")).thenReturn(List.of());
-
-        assertThatNoException().isThrownBy(() -> movieService.searchMovies("Thor", "OMDB"));
-        verify(omdbService).searchMovies("Thor");
-    }
-
-    @Test
-    void searchMovies_throwsInvalidApiException_whenApiNameUnknown() {
-        assertThatThrownBy(() -> movieService.searchMovies("Thor", "unknown"))
-                .isInstanceOf(InvalidApiException.class)
-                .hasMessageContaining("unknown");
-    }
-
-    @Test
     void searchMovies_returnsEmptyMovieList_whenServiceReturnsEmpty() {
         when(omdbService.searchMovies("XYZ")).thenReturn(List.of());
 
-        MovieResponse response = movieService.searchMovies("XYZ", "omdb");
+        MovieResponse response = movieService.searchMovies("XYZ", ApiName.OMDB);
 
         assertThat(response.movies()).isEmpty();
     }

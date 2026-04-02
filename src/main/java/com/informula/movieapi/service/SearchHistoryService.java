@@ -1,6 +1,7 @@
 package com.informula.movieapi.service;
 
 import com.informula.movieapi.entity.SearchHistory;
+import com.informula.movieapi.enums.ApiName;
 import com.informula.movieapi.repository.SearchHistoryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,11 +24,11 @@ public class SearchHistoryService {
 
     @Async("asyncTaskExecutor")
     @Transactional
-    public void saveAsync(String query, String apiName, int resultCount) {
+    public void saveAsync(String query, ApiName apiName, int resultCount) {
         try {
             repository.save(new SearchHistory(
                     query.trim().toLowerCase(),
-                    apiName.toLowerCase(),
+                    apiName,
                     resultCount,
                     LocalDateTime.now()));
         } catch (Exception e) {

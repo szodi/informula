@@ -1,6 +1,7 @@
 package com.informula.movieapi.controller;
 
 import com.informula.movieapi.dto.MovieResponse;
+import com.informula.movieapi.enums.ApiName;
 import com.informula.movieapi.service.MovieService;
 import com.informula.movieapi.service.SearchHistoryService;
 import jakarta.validation.constraints.NotBlank;
@@ -27,8 +28,9 @@ public class MovieController {
             @PathVariable @NotBlank(message = "Movie title must not be blank") String movieTitle,
             @RequestParam @NotBlank(message = "API name must not be blank") String api) {
 
-        MovieResponse response = movieService.searchMovies(movieTitle, api);
-        searchHistoryService.saveAsync(movieTitle, api, response.movies().size());
+        ApiName apiName = ApiName.fromString(api);
+        MovieResponse response = movieService.searchMovies(movieTitle, apiName);
+        searchHistoryService.saveAsync(movieTitle, apiName, response.movies().size());
         return ResponseEntity.ok(response);
     }
 }

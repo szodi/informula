@@ -1,7 +1,7 @@
 package com.informula.movieapi.service;
 
 import com.informula.movieapi.dto.MovieResponse;
-import com.informula.movieapi.exception.InvalidApiException;
+import com.informula.movieapi.enums.ApiName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,16 +20,9 @@ public class MovieService {
         this.movieApiServices = movieApiServices;
     }
 
-    @Cacheable(value = "movies", key = "#apiName.toLowerCase() + ':' + #title.toLowerCase().trim()")
-    public MovieResponse searchMovies(String title, String apiName) {
-        String normalisedApi = apiName.toLowerCase();
-        log.info("Cache miss — fetching from {} for title='{}'", normalisedApi, title);
-
-        MovieApiService service = movieApiServices.get(normalisedApi);
-        if (service == null) {
-            throw new InvalidApiException("Unknown API '" + apiName + "'. Supported values: omdb, tmdb");
-        }
-
-        return new MovieResponse(service.searchMovies(title));
+    @Cacheable(value = "movies", key = "#api.beanName() + ':' + #title.toLowerCase().trim()")
+    public MovieResponse searchMovies(String title, ApiName api) {
+        log.info("Cache miss — fetching from {} for title='{}'", api.beanName(), title);
+        return new MovieResponse(movieApiServices.get(api.beanName()).searchMovies(title));
     }
 }
